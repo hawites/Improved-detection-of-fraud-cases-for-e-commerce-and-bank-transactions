@@ -1,107 +1,117 @@
-# Improved Detection of Fraud Cases for E-commerce and Bank Transactions
+# Improved Detection of Fraud Cases for E-Commerce and Bank Transactions
 
-## 📍 Project Overview
-This project addresses the critical challenge of fraud detection using two datasets:
-- **E-commerce fraud data**
-- **Credit card transaction data**
+This project aims to improve fraud detection in e-commerce and banking transactions using machine learning and explainability tools. It includes data cleaning, feature engineering, model training, evaluation, and SHAP-based model interpretation.
 
-Our goal is to build reliable machine learning models to detect fraud, apply explainability, and interpret the key drivers behind fraudulent activity.
+## 📁 Project Structure
 
----
-
-## ✅ Task 1: Data Cleaning, Preprocessing & Feature Engineering
-
-### ✅ Activities Completed:
-- Loaded all datasets and confirmed absence of missing values.
-- Converted time columns to `datetime64` format.
-- Removed 1,081 duplicates from credit card data.
-- Converted `ip_address` to integer and merged with geolocation data.
-- Performed univariate and bivariate analysis:
-  - Class imbalance observed in both datasets.
-- Created key engineered features:
-  - `time_since_signup`, `hour_of_day`, `day_of_week`, transaction count per user and device.
-- Used **SMOTE** to oversample minority class.
-
-### 🔎 Visuals:
-- Class distribution plots for e-commerce and credit card datasets.
-
----
-
-## ✅ Task 2: Model Training & Evaluation
-
-### ✅ Modeling Steps:
-- Encoded categorical variables using OneHotEncoding.
-- Used SMOTE for handling imbalance.
-- Split data into train/test using stratified sampling.
-
-### ✅ Models Trained:
-1. **Logistic Regression** – Baseline model
-2. **XGBoost Classifier** – Chosen ensemble model
-
-### 📊 Evaluation Metrics:
-- **Precision-Recall Curve (AUC-PR)**
-- **F1-Score**
-- **Confusion Matrix**
-
-### 🎯 Results:
-| Dataset       | Model                | F1 Score | AUC-PR |
-|---------------|----------------------|----------|--------|
-| E-commerce    | Logistic Regression  | 0.61     | 0.67   |
-| E-commerce    | XGBoost              | 0.69     | 0.71   |
-| Credit Card   | Logistic Regression  | 0.09     | 0.72   |
-| Credit Card   | XGBoost              | 0.77     | 0.78   |
-
-📌 **Best Model**: XGBoost (both datasets)
-
----
-
-## ✅ Task 3: Model Explainability (SHAP)
-
-### 🧠 SHAP Visualizations:
-- **Summary Plot**: Global feature importance.
-- **Force Plot**: Local explanation for a single prediction.
-
-### 🔍 Key Drivers Identified:
-- `transaction_count`, `hour_of_day`, and `device_transaction_count` were among top influential features in predicting fraud.
-
----
-
-## 🗂 Project Structure
-
+```
+Improved-detection-of-fraud-cases/
 ├── data/
-│ ├── Fraud_Data.csv
-│ ├── creditcard.csv
-│ └── IpAddress_to_Country.csv
-├── src/
-│ ├── preprocessing.py
-│ ├── features.py
-│ ├── models.py
-│ └── shap_explainer.py
+├── models/
 ├── notebooks/
-│ ├── EDA_and_Preprocessing.ipynb
-│ ├── Model_Training.ipynb
-│ └── SHAP_Explainability.ipynb
+├── outputs/
+│   └── images/
+├── src/
 ├── tests/
-│ ├── test_preprocessing.py
-│ ├── test_features.py
-│ └── test_shap_explainer.py
-├── scripts/
-│ └── run_training.py
-└── .github/
-└── workflows/
-└── main.yml
+├── README.md
 
----
+```
 
-## ✅ Tech Stack
+## ✅ Objectives
 
-- Python, Pandas, Scikit-learn, XGBoost, SHAP
-- Imbalanced-learn (SMOTE)
-- Matplotlib for visualizations
-- Modular OOP Codebase for maintainability
+- Clean and prepare two fraud-related datasets (e-commerce and credit card).
+- Build and evaluate robust machine learning models for fraud detection.
+- Use SHAP to explain model predictions and understand key fraud indicators.
 
----
+## 🗃️ Datasets
 
-## ✅ Authors
-Hawi T.  
-Submission Date: August 4, 2025
+1. **E-commerce Fraud Dataset**  
+   - Includes features like `purchase_time`, `signup_time`, `source`, `browser`, `device_id`, `ip_address`, etc.
+
+2. **Credit Card Transactions Dataset**  
+   - Contains `user_id`, `card_id`, and fraud labels.
+
+## 🧹 Task 1: Data Preprocessing & Feature Engineering
+
+Implemented using `Preprocessor` and `FeatureEngineer` classes:
+
+- Converted timestamps to datetime and extracted features like:
+  - `time_since_signup`
+  - `hour_of_day`
+  - `day_of_week`
+- Converted IP to integer format
+- One-hot encoded categorical features like:
+  - `source`, `browser`, `sex`
+- Removed duplicates in credit data
+
+**Output:** Cleaned and processed DataFrames saved to `data/`.
+
+## 🤖 Task 2: Model Training & Evaluation
+
+Trained both **Logistic Regression** and **XGBoost** with **SMOTE** on the imbalanced datasets.
+
+### 🚀 Results on E-Commerce Dataset:
+
+| Metric         | Logistic Regression | XGBoost      |
+|----------------|---------------------|--------------|
+| F1 Score       | 0.61                | **0.69**     |
+| AUC-PR         | 0.67                | **0.71**     |
+| Accuracy       | 0.91                | **0.96**     |
+
+### 🚀 Results on Credit Dataset:
+
+| Metric         | Logistic Regression | XGBoost      |
+|----------------|---------------------|--------------|
+| F1 Score       | 0.09                | **0.77**     |
+| AUC-PR         | 0.72                | **0.78**     |
+| Accuracy       | 0.97                | **1.00**     |
+
+📦 **Best models saved to `models/`**.
+
+## 📊 Task 3: SHAP Explainability
+
+Used **SHAP (SHapley Additive exPlanations)** to interpret the predictions of the best XGBoost models.
+
+### 🔍 Key Findings:
+
+- **Top fraud indicators** for e-commerce:
+  - `time_since_signup` (long delays = suspicious)
+  - `source_Direct` (direct traffic patterns)
+  - `device_transaction_count` (low activity = risk)
+  - `hour_of_day`, `browser_Safari` (odd usage patterns)
+
+### 📈 Summary Plot
+
+![SHAP Summary](outputs/images/shap_summary.png)
+
+### 📉 Force Plot
+
+Explains an individual transaction’s prediction:
+
+![SHAP Force](outputs/images/force_plot.png)
+
+## 🧪 Tests
+
+Unit tests implemented for all key components:
+- `Preprocessor`
+- `FeatureEngineer`
+- `ModelTrainer`
+
+Run with:
+```bash
+pytest tests/
+```
+
+## 📌 Tools & Libraries
+
+- `pandas`, `numpy`, `matplotlib`, `seaborn`
+- `scikit-learn`, `xgboost`, `imblearn`
+- `shap`, `joblib`, `pytest`
+
+## 📚 Author
+
+- **Hawi Tesfaye**
+- Tools: Python, Jupyter, SHAP, XGBoost
+- Contact: [htesfaye.ht@gmail.com](mailto:htesfaye.ht@gmail.com)
+
+
