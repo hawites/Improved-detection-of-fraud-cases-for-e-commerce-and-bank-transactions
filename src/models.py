@@ -6,6 +6,8 @@ from xgboost import XGBClassifier
 from imblearn.over_sampling import SMOTE
 from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
+import joblib  
+import os
 
 class ModelTrainer:
     def __init__(self, df, target_col, drop_cols=[]):
@@ -40,7 +42,7 @@ class ModelTrainer:
 
         print("After SMOTE:", pd.Series(self.y_train).value_counts())
 
-    def train_logistic_regression(self):
+    def train_logistic_regression(self, save_path=None):
         model = LogisticRegression(
             max_iter=1000,             
             solver='lbfgs',            
@@ -49,7 +51,12 @@ class ModelTrainer:
         model.fit(self.X_train, self.y_train)
         self.evaluate(model, "Logistic Regression")
 
-    def train_xgboost(self):
+        if save_path:
+            os.makedirs(os.path.dirname(save_path), exist_ok=True)
+            joblib.dump(model, save_path)
+            print(f"Model saved to {save_path}")
+
+    def train_xgboost(self, save_path=None):
         model = XGBClassifier(
             eval_metric='logloss',  
             verbosity=0,
@@ -57,7 +64,10 @@ class ModelTrainer:
         )
         model.fit(self.X_train, self.y_train)
         self.evaluate(model, "XGBoost")
-
+        if save_path:
+            os.makedirs(os.path.dirname(save_path), exist_ok=True)
+            joblib.dump(model, save_path)
+            print(f"Model saved to {save_path}")
 
     def evaluate(self, model, name):
         preds = model.predict(self.X_test)
