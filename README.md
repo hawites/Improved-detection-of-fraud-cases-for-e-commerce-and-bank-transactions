@@ -1,61 +1,65 @@
-## ✅ Task 1: Data Analysis and Preprocessing
+# 🛡️ Fraud Detection for E-commerce and Bank Transactions
 
-### Datasets Used:
-- Fraud_Data.csv (E-commerce transactions)
-- creditcard.csv (Bank transactions)
-- IpAddress_to_Country.csv (Geolocation enrichment)
+## 📁 Project Overview
+
+This project aims to improve the detection of fraudulent transactions in both e-commerce and banking systems. Using advanced machine learning, enriched features, and explainable AI, we help financial institutions reduce losses while minimizing false positives that harm user experience.
+
+---
+
+## ✅ Task 1: Data Preprocessing and Analysis
+
+### Objectives:
+- Load, inspect, and clean data from three sources:
+  - `Fraud_Data.csv` (e-commerce)
+  - `creditcard.csv` (bank transactions)
+  - `IpAddress_to_Country.csv` (geo enrichment)
+- Convert raw timestamps and IPs for analysis
+- Prepare datasets for feature engineering and modeling
 
 ### Key Steps:
-- Organized data loading and cleaning code into `src/preprocessing.py`
-- Converted time columns and IPs, dropped duplicates
-- Verified class imbalance: ~9% fraud (ecom), ~0.17% fraud (bank)
-- Ready for EDA and geolocation merging in Task 2
+- Converted `signup_time` and `purchase_time` to datetime
+- Transformed `ip_address` float values into integers
+- Checked and removed duplicates (credit data had 1081)
+- Modularized preprocessing into `Preprocessor` class
 
-### Next:
-- Merge IP ranges for country-based fraud insights.
-- Engineer new time and user behavior features.
+---
 
-## ✅ Task 2: Exploratory Data Analysis and Feature Engineering
+## ✅ Task 2: EDA and Feature Engineering
 
-### Summary
+### Visual Insights (E-commerce):
+- 📊 **Purchase Value Distribution:** Skewed toward lower values  
+- 🌍 **Fraud by Source:** Highest fraud ratio observed in `SEO` and `Ads`
+- 🧭 **Browser Distribution:** Chrome was dominant, but Firefox and Safari had higher fraud ratios
+- 📈 **Boxplot (Fraud vs Purchase):** Subtle difference in purchase values across classes
 
-In Task 2, we performed exploratory data analysis (EDA) and created new features to enrich the e-commerce fraud dataset. All logic was modularized into Python classes using an OOP approach and called from a clean notebook.
 
-### Key Activities
+### Features Engineered:
+- ⏰ `hour_of_day`, `day_of_week`, `time_since_signup`
+- 📊 `transaction_count` per user, `device_transaction_count`
+- 🌍 IP-to-country enrichment
 
-- **Modularized Analysis:**
-  - Created `EDA` and `FeatureEngineer` classes in `src/eda.py` and `src/features.py`.
+### Reusability:
+- Created OOP classes:
+  - `EDA` → Plot and interpret patterns
+  - `FeatureEngineer` → Add derived features
+- Stored in `src/` for easy import and testing
 
-- **Exploratory Data Analysis (EDA):**
-  - Plotted purchase value distribution.
-  - Examined fraud distribution by source, browser, and purchase value.
-  - Observed a higher proportion of fraud from `SEO` and `Ads` sources.
-  - Noted that the distribution of purchase value is right-skewed.
+---
 
-- **Feature Engineering:**
-  - Extracted time-based features:
-    - `hour_of_day`, `day_of_week` from `purchase_time`
-    - `time_since_signup` in hours
-  - Added frequency-based features:
-    - `transaction_count` per `user_id`
-    - `device_transaction_count` per `device_id`
-  - Enriched data with a `country` column by merging IP ranges with the IP-to-country dataset.
+## ✅ Reproducibility & Code Hygiene
 
-### Notebooks and Files
+- All tasks organized in Jupyter notebooks and OOP `.py` modules
+- Git branches used per task (`task-1`, `task-2`, etc.)
+- Project hygiene established:
+  - `.github/workflows/ci.yml` for CI pipelines
+  - `scripts/` for automation
+  - `tests/` folder scaffolded for unit testing
 
-- `notebooks/02_eda_feature_engineering.ipynb`
-- `src/eda.py` — EDA class
-- `src/features.py` — Feature engineering class
+---
 
-### Visuals Generated
+## 📌 Next Steps
 
-- Distribution of `purchase_value`
-- Count of `browser`
-- Fraud by `source`
-- Boxplot of `purchase_value` vs `class`
-
-### Next Steps
-
-- Explore and preprocess the credit card fraud dataset.
-- Address class imbalance in both datasets.
-- Train and evaluate fraud detection models (Logistic Regression and XGBoost).
+- Handle class imbalance using SMOTE
+- Train Logistic Regression and XGBoost models
+- Evaluate using F1-score and AUC-PR
+- Begin Task 3: Explainability with SHAP
