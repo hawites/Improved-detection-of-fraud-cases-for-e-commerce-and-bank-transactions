@@ -82,13 +82,13 @@ Used **SHAP (SHapley Additive exPlanations)** to interpret the predictions of th
 
 ### 📈 Summary Plot
 
-![SHAP Summary](outputs/images/shap_summary.png)
+![SHAP Summary](outputs/images/shap_summary.PNG)
 
 ### 📉 Force Plot
 
 Explains an individual transaction’s prediction:
 
-![SHAP Force](outputs/images/force_plot.png)
+![SHAP Force](outputs/images/force_plot.PNG)
 
 ## 🧪 Tests
 
