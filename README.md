@@ -88,7 +88,7 @@ Used **SHAP (SHapley Additive exPlanations)** to interpret the predictions of th
 
 Explains an individual transaction’s prediction:
 
-![SHAP Force](outputs/images/force plot.PNG)
+![SHAP Force](outputs/images/force_plot.PNG)
 
 ## 🧪 Tests
 
