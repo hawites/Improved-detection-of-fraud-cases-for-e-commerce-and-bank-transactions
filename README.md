@@ -6,43 +6,88 @@ This project aims to improve the detection of fraudulent transactions in both e-
 
 ---
 
-## ✅ Task 1: Data Preprocessing and Analysis
+## ✅ Task 1: Data Analysis and Preprocessing
 
-### Objectives:
-- Load, inspect, and clean data from three sources:
-  - `Fraud_Data.csv` (e-commerce)
-  - `creditcard.csv` (bank transactions)
-  - `IpAddress_to_Country.csv` (geo enrichment)
-- Convert raw timestamps and IPs for analysis
-- Prepare datasets for feature engineering and modeling
-
-### Key Steps:
-- Converted `signup_time` and `purchase_time` to datetime
-- Transformed `ip_address` float values into integers
-- Checked and removed duplicates (credit data had 1081)
-- Modularized preprocessing into `Preprocessor` class
+### 📂 Objective:
+Prepare high-quality, clean datasets that are ready for modeling. This task focused on cleaning, exploratory analysis, feature engineering, and addressing class imbalance — all critical for detecting fraud in both e-commerce and banking transactions.
 
 ---
 
-## ✅ Task 2: EDA and Feature Engineering
+### 🔧 Key Steps Completed:
 
-### Visual Insights (E-commerce):
-- 📊 **Purchase Value Distribution:** Skewed toward lower values  
-- 🌍 **Fraud by Source:** Highest fraud ratio observed in `SEO` and `Ads`
-- 🧭 **Browser Distribution:** Chrome was dominant, but Firefox and Safari had higher fraud ratios
-- 📈 **Boxplot (Fraud vs Purchase):** Subtle difference in purchase values across classes
+- **Data Loading & Initial Checks**
+  - Loaded `Fraud_Data.csv`, `creditcard.csv`, and `IpAddress_to_Country.csv`
+  - Confirmed no missing values in any of the datasets
 
+- **Data Cleaning**
+  - Removed 1,081 duplicates from the credit card dataset
+  - Converted `signup_time` and `purchase_time` into `datetime` format
+  - Transformed float-style `ip_address` into integers for later merging
 
-### Features Engineered:
-- ⏰ `hour_of_day`, `day_of_week`, `time_since_signup`
-- 📊 `transaction_count` per user, `device_transaction_count`
-- 🌍 IP-to-country enrichment
+- **Univariate & Bivariate EDA**
+  - Analyzed class distributions to understand fraud imbalance across both datasets
+  - [✓ See image: E-commerce fraud class distribution]
+  - [✓ See image: Credit card fraud class distribution]
 
-### Reusability:
-- Created OOP classes:
-  - `EDA` → Plot and interpret patterns
-  - `FeatureEngineer` → Add derived features
-- Stored in `src/` for easy import and testing
+- **Feature Engineering**
+  - Extracted time-based features: `hour_of_day`, `day_of_week`, and `time_since_signup`
+  - Calculated frequency-based metrics: `transaction_count` and `device_transaction_count`
+  - Merged IP data with geolocation dataset to extract user `country`
+
+- **Class Imbalance Analysis**
+  - E-commerce: ~9.4% fraud cases
+  - Credit card: ~0.17% fraud cases
+  - Planned use of **SMOTE** during Task 2 to address imbalance
+
+---
+
+### 🧱 Structure and Code Hygiene
+
+- **Notebook:** `notebooks/01_data_exploration.ipynb`
+- **Modules:** `src/preprocessing.py`, `src/features.py`
+- **Test Scaffold:** `tests/test_preprocessing.py`
+- **CI & Scripts:** `.github/workflows/`, `scripts/`
+
+---
+
+## 🚀 Task 2 - Model Building and Training
+
+In this task, we trained and evaluated machine learning models on both the e-commerce fraud and credit card fraud datasets.
+
+### 📌 Data Preparation
+- The target columns were `class` (for e-commerce) and `Class` (for credit card).
+- Unnecessary columns such as timestamps, user/device IDs, and IP fields were dropped.
+- One-hot encoding was applied to categorical features.
+- SMOTE was used to address class imbalance, oversampling only the training data.
+
+### 🔍 Models Trained
+- **Logistic Regression**: Chosen for its simplicity and interpretability.
+- **XGBoost Classifier**: Selected as a powerful gradient boosting ensemble model.
+
+### 📊 Evaluation Metrics
+The used metrics suitable for imbalanced datasets:
+- **F1 Score**
+- **Confusion Matrix**
+- **Precision-Recall AUC (AUC-PR)**
+
+#### 📈 E-Commerce Dataset
+| Model               | F1 Score | AUC-PR | Notes |
+|--------------------|----------|--------|-------|
+| Logistic Regression| 0.61     | 0.67   | Strong precision, weaker recall. |
+| XGBoost            | 0.69     | 0.71   | Better balance of precision and recall. |
+
+#### 📈 Credit Card Dataset
+| Model               | F1 Score | AUC-PR | Notes |
+|--------------------|----------|--------|-------|
+| Logistic Regression| 0.09     | 0.72   | High recall but very low precision. |
+| XGBoost            | 0.77     | 0.78   | Excellent performance despite class imbalance. |
+
+### ⚖️ Class Imbalance Strategy
+Both datasets showed heavy class imbalance (fraud under 1–9%). We applied **SMOTE** (Synthetic Minority Over-sampling Technique) only to the training set to preserve test integrity. This significantly improved recall and F1-score for both models.
+
+### 🧪 Model Summary
+- XGBoost consistently outperformed Logistic Regression.
+- Visual precision-recall curves confirmed superior AUC-PR for XGBoost in both datasets.
 
 ---
 
@@ -57,9 +102,4 @@ This project aims to improve the detection of fraudulent transactions in both e-
 
 ---
 
-## 📌 Next Steps
 
-- Handle class imbalance using SMOTE
-- Train Logistic Regression and XGBoost models
-- Evaluate using F1-score and AUC-PR
-- Begin Task 3: Explainability with SHAP

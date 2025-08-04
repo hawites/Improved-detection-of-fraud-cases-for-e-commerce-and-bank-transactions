@@ -4,6 +4,7 @@ from sklearn.metrics import f1_score, confusion_matrix, classification_report, p
 from sklearn.linear_model import LogisticRegression
 from xgboost import XGBClassifier
 from imblearn.over_sampling import SMOTE
+from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
 
 class ModelTrainer:
@@ -19,30 +20,44 @@ class ModelTrainer:
         X = self.df.drop(self.drop_cols + [self.target], axis=1)
         y = self.df[self.target]
 
-        # Encode categorical variables (if any)
+        # One-hot encode categorical variables
         X = pd.get_dummies(X, drop_first=True)
+
+        #  Scale features to ensure convergence
+        scaler = StandardScaler()
+        X = scaler.fit_transform(X)
 
         # Train-test split
         self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(
-            X, y, test_size=0.3, stratify=y, random_state=42)
+            X, y, test_size=0.3, stratify=y, random_state=42
+        )
 
         print("Before SMOTE:", self.y_train.value_counts())
 
-        # SMOTE for oversampling
+        # Apply SMOTE to training set
         smote = SMOTE(random_state=42)
         self.X_train, self.y_train = smote.fit_resample(self.X_train, self.y_train)
 
         print("After SMOTE:", pd.Series(self.y_train).value_counts())
 
     def train_logistic_regression(self):
-        model = LogisticRegression(max_iter=1000)
+        model = LogisticRegression(
+            max_iter=1000,             
+            solver='lbfgs',            
+            class_weight='balanced'    
+        )
         model.fit(self.X_train, self.y_train)
         self.evaluate(model, "Logistic Regression")
 
     def train_xgboost(self):
-        model = XGBClassifier(use_label_encoder=False, eval_metric='logloss')
+        model = XGBClassifier(
+            eval_metric='logloss',  
+            verbosity=0,
+            random_state=42
+        )
         model.fit(self.X_train, self.y_train)
         self.evaluate(model, "XGBoost")
+
 
     def evaluate(self, model, name):
         preds = model.predict(self.X_test)
